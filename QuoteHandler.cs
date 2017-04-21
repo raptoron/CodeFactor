@@ -1135,7 +1135,7 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
                     {
                         _tracingService.Trace("From: " + (Int32)(Decimal)chattelFeeRecords.Entities[x].GetAttributeValue<Money>("gsc_loanamount").Value + "To: " + (Int32)(Decimal)chattelFeeRecords.Entities[x + 1].GetAttributeValue<Money>("gsc_loanamount").Value);
                         //if (unitPriceAmount >= (Decimal)chattelFeeRecords.Entities[x].GetAttributeValue<Money>("gsc_loanamount").Value && unitPriceAmount <= (Decimal)chattelFeeRecords.Entities[x+1].GetAttributeValue<Money>("gsc_loanamount").Value)
-                        if (Enumerable.Range((Int32)(Decimal)chattelFeeRecords.Entities[x].GetAttributeValue<Money>("gsc_loanamount").Value, ((Int32)(Decimal)chattelFeeRecords.Entities[x + 1].GetAttributeValue<Money>("gsc_loanamount").Value)).Contains((Int32)unitPriceAmount))
+                        if (Enumerable.Range((Int32)(Decimal)chattelFeeRecords.Entities[x].GetAttributeValue<Money>("gsc_loanamount").Value, (Int32)(Decimal)chattelFeeRecords.Entities[x + 1].GetAttributeValue<Money>("gsc_loanamount").Value).Contains((Int32)unitPriceAmount))
                         {
                             chattelfee = (Decimal)chattelFeeRecords.Entities[x].GetAttributeValue<Money>("gsc_chattelfeeamount").Value;
                             _tracingService.Trace("Range Chattel Fee: " + chattelfee);

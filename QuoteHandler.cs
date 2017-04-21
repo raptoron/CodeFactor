@@ -581,7 +581,7 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
 
             _tracingService.Trace("WithAFDiscount Computed.");
 
-            return pv * (rate / 12) / (1 - Math.Pow((1 + (rate / 12)), -1 * term));
+            return pv * (rate / 12) / (1 - Math.Pow(1 + (rate / 12), -1 * term));
         }
 
         /*Monthly Amortization =  (Total Amount Financed x (1+AOR)/ Financing Terms
@@ -1135,7 +1135,7 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
                     {
                         _tracingService.Trace("From: " + (Int32)(Decimal)chattelFeeRecords.Entities[x].GetAttributeValue<Money>("gsc_loanamount").Value + "To: " + (Int32)(Decimal)chattelFeeRecords.Entities[x + 1].GetAttributeValue<Money>("gsc_loanamount").Value);
                         //if (unitPriceAmount >= (Decimal)chattelFeeRecords.Entities[x].GetAttributeValue<Money>("gsc_loanamount").Value && unitPriceAmount <= (Decimal)chattelFeeRecords.Entities[x+1].GetAttributeValue<Money>("gsc_loanamount").Value)
-                        if (Enumerable.Range(((Int32)(Decimal)chattelFeeRecords.Entities[x].GetAttributeValue<Money>("gsc_loanamount").Value), ((Int32)(Decimal)chattelFeeRecords.Entities[x + 1].GetAttributeValue<Money>("gsc_loanamount").Value)).Contains((Int32)unitPriceAmount))
+                        if (Enumerable.Range((Int32)(Decimal)chattelFeeRecords.Entities[x].GetAttributeValue<Money>("gsc_loanamount").Value, ((Int32)(Decimal)chattelFeeRecords.Entities[x + 1].GetAttributeValue<Money>("gsc_loanamount").Value)).Contains((Int32)unitPriceAmount))
                         {
                             chattelfee = (Decimal)chattelFeeRecords.Entities[x].GetAttributeValue<Money>("gsc_chattelfeeamount").Value;
                             _tracingService.Trace("Range Chattel Fee: " + chattelfee);
@@ -1550,11 +1550,11 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
 
                 //Financing
                 if (paymentMode == 100000001)
-                    sales = (netPrice) / (1 + vehicleTaxRate);
+                    sales = netPrice / (1 + vehicleTaxRate);
                 //Cash/Bank PO/Company PO
                 else
                     //sales = (netPrice + otherCharges + insurance + accessories) / (1 + vehicleTaxRate);
-                    sales = (netPrice) / (1 + vehicleTaxRate); //changed as per bug#15957. Modified 4-10-17
+                    sales = netPrice / (1 + vehicleTaxRate); //changed as per bug#15957. Modified 4-10-17
                 sales = Math.Round(sales, 2);
 
                 if (taxCategory == 100000000)//VATable

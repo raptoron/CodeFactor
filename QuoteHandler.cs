@@ -83,7 +83,6 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
 
             PopulatePaymentSummary(quoteEntity);
 
-
             _tracingService.Trace("Ended ReplicateOpportunityInfo method..");
             return quoteEntity;
         }
@@ -108,7 +107,6 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
 
                 if (vehicleEntity.GetAttributeValue<EntityReference>("gsc_taxid") == null || vehicleEntity.Contains("gsc_taxrate") == false)
                     throw new InvalidPluginExecutionException("Cannot proceed with your transaction.\n Please setup tax for Product Catalog.");
-
             }
         }
         public void CheckifCustomerHasTax(Entity quoteEntity)
@@ -210,7 +208,7 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
                     String description = "Engine Type: " + enginetype +
                         "\nModel Code: " + modelCode +
                         "\nOption Code: " + optionCode + 
-                        "\nTransmission: "+ transmission + 
+                        "\nTransmission: " + transmission + 
                         "\nWeight: " + gvw +
                         "\nDisplacement: " + piston +
                         "\nFuel: " + fuel + 
@@ -298,7 +296,6 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
                 return quoteToUpdate.GetAttributeValue<Money>("gsc_insurance");
             }
 
-
             _tracingService.Trace("Ended PopulateInsuranceCoverage method ...");
 
             return quoteEntity.GetAttributeValue<Money>("gsc_insurance");
@@ -332,7 +329,6 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
                 //Retrieve related products from Product Relationship entity
                 EntityCollection vehicleAccessories = CommonHandler.RetrieveRecordsByConditions("gsc_sls_vehicleaccessory", productConditionList, _organizationService, null, OrderType.Ascending,
                     new[] { "gsc_itemid", "gsc_vehicleaccessorypn" });
-
 
                 if (vehicleAccessories != null && vehicleAccessories.Entities.Count > 0)
                 {
@@ -411,10 +407,10 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
         {
             _tracingService.Trace("Started CheckMonthlyAmortizationRecord method ...");
 
-            EntityCollection MARecords = CommonHandler.RetrieveRecordsByOneValue("gsc_sls_quotemonthlyamortization", "gsc_quoteid", quoteEntity.Id, _organizationService, null, OrderType.Ascending,
+            EntityCollection mARecords = CommonHandler.RetrieveRecordsByOneValue("gsc_sls_quotemonthlyamortization", "gsc_quoteid", quoteEntity.Id, _organizationService, null, OrderType.Ascending,
                 new[] { "gsc_quoteid" });
 
-            if (MARecords != null || MARecords.Entities.Count > 0)
+            if (mARecords != null || MARecords.Entities.Count > 0)
             {
                 foreach (var amortization in MARecords.Entities)
                 {
@@ -573,20 +569,19 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
                 ? schemeEntity.GetAttributeValue<double>("gsc_interestrate")
                 : 0;
 
-
-            double PV = (amountfinanced * (1 + (dealerRate / 100))) - (double)afDiscount;
+            double pv = (amountfinanced * (1 + (dealerRate / 100))) - (double)afDiscount;
 
             double rate = interestRate / 100;
 
             if (rate == 0)
             {
                 _tracingService.Trace("WithAFDiscount Computed.");
-                return PV / term;
+                return pv / term;
             }
 
             _tracingService.Trace("WithAFDiscount Computed.");
 
-            return ((PV * (rate / 12)) / (1 - Math.Pow((1 + (rate / 12)), (-1 * term))));
+            return ((pv * (rate / 12)) / (1 - Math.Pow((1 + (rate / 12)), (-1 * term))));
         }
 
         /*Monthly Amortization =  (Total Amount Financed x (1+AOR)/ Financing Terms
@@ -632,23 +627,23 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
 
                 var bankid = quoteEntity.GetAttributeValue<EntityReference>("gsc_bankid").Id;
 
-                var RequirementCondition = new List<ConditionExpression>
+                var requirementCondition = new List<ConditionExpression>
                 {
                     new ConditionExpression("gsc_quoteid", ConditionOperator.Equal, quoteEntity.Id),
                     new ConditionExpression("gsc_bankid", ConditionOperator.Equal, bankid)
                 };
 
-                EntityCollection Requirement = CommonHandler.RetrieveRecordsByConditions("gsc_sls_requirementchecklist", RequirementCondition, _organizationService, null, OrderType.Ascending,
+                EntityCollection requirement = CommonHandler.RetrieveRecordsByConditions("gsc_sls_requirementchecklist", requirementCondition, _organizationService, null, OrderType.Ascending,
                 new[] { "gsc_quoteid", "gsc_bankid" });
 
                 //delete existing Requirement Checklsit
-                if (Requirement != null || Requirement.Entities.Count > 0)
+                if (requirement != null || requirement.Entities.Count > 0)
                 {
-                    foreach (Entity RequirmenttobeDeleted in Requirement.Entities)
+                    foreach (Entity requirmenttobeDeleted in requirement.Entities)
                     {
                         _tracingService.Trace("Deleting existing Requirement Checklist records ...");
 
-                        _organizationService.Delete(RequirmenttobeDeleted.LogicalName, RequirmenttobeDeleted.Id);
+                        _organizationService.Delete(requirmenttobeDeleted.LogicalName, requirmenttobeDeleted.Id);
                     }
                 }
 
@@ -656,17 +651,17 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
 
                 Entity requirementEntity = new Entity("gsc_sls_requirementchecklist");
 
-                var DocumentCondition = new List<ConditionExpression>
+                var documentCondition = new List<ConditionExpression>
                     {
                         new ConditionExpression("gsc_bankid", ConditionOperator.Equal, bankid)
                     };
 
-                EntityCollection Document = CommonHandler.RetrieveRecordsByConditions("gsc_sls_documentchecklist", DocumentCondition, _organizationService, null, OrderType.Ascending,
+                EntityCollection document = CommonHandler.RetrieveRecordsByConditions("gsc_sls_documentchecklist", documentCondition, _organizationService, null, OrderType.Ascending,
                 new[] { "gsc_documentid", "gsc_documentchecklistpn", "gsc_customertype", "gsc_mandatory", "gsc_documenttype" });
 
-                if (Document != null || Document.Entities.Count > 0)
+                if (document != null || document.Entities.Count > 0)
                 {
-                    foreach (var documentrecord in Document.Entities)
+                    foreach (var documentrecord in document.Entities)
                     {
                         _tracingService.Trace("Creating Requirement Checklist ...");
 
@@ -685,7 +680,6 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
                     return requirementEntity;
                 }
             }
-
 
             _tracingService.Trace("Ended CreateRequirementChecklist method ...");
 
@@ -864,7 +858,6 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
             _tracingService.Trace("Ended SetLessDiscountValues method...");
         }
 
-
         //TO BE DELETED
         //Created By: Raphael Herrera, Created On: 12-22-2016
         //Validates Values in Discounts to be aligned with Total Discount Amount
@@ -876,17 +869,16 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
             Double applyToAF = quoteEntity.Contains("gsc_applytoafpercentage") ? quoteEntity.GetAttributeValue<Double>("gsc_applytoafpercentage") : 0;
             Double applyToUP = quoteEntity.Contains("gsc_applytouppercentage") ? quoteEntity.GetAttributeValue<Double>("gsc_applytouppercentage") : 0;
 
-            Decimal DPAmount = totalDiscountAmount * ((decimal)applyToDP / 100);
-            Decimal AFAmount = totalDiscountAmount * ((decimal)applyToAF / 100);
-            Decimal UPAmount = totalDiscountAmount * ((decimal)applyToUP / 100);
+            Decimal dpAmount = totalDiscountAmount * ((decimal)applyToDP / 100);
+            Decimal afAmount = totalDiscountAmount * ((decimal)applyToAF / 100);
+            Decimal upAmount = totalDiscountAmount * ((decimal)applyToUP / 100);
 
-            quoteEntity["gsc_applytodpamount"] = new Money(DPAmount);
-            quoteEntity["gsc_applytoafamount"] = new Money(AFAmount);
-            quoteEntity["gsc_applytoupamount"] = new Money(UPAmount);
-            quoteEntity["gsc_lessdiscount"] = new Money(DPAmount);
-            quoteEntity["gsc_lessdiscountaf"] = new Money(AFAmount);
-            quoteEntity["gsc_totaldiscount"] = new Money(UPAmount);
-
+            quoteEntity["gsc_applytodpamount"] = new Money(dpAmount);
+            quoteEntity["gsc_applytoafamount"] = new Money(afAmount);
+            quoteEntity["gsc_applytoupamount"] = new Money(upAmount);
+            quoteEntity["gsc_lessdiscount"] = new Money(dpAmount);
+            quoteEntity["gsc_lessdiscountaf"] = new Money(afAmount);
+            quoteEntity["gsc_totaldiscount"] = new Money(upAmount);
 
             _tracingService.Trace("Ending ValidateDiscounts Method...");
             return quoteEntity;
@@ -909,7 +901,6 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
 
             return downPaymentAmount;
         }
-
 
         //Created By: Leslie Baliguat
         /*Purpose: Compute Net Downpayment = downpayment - discount
@@ -935,7 +926,6 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
                 netdp = downpayment;
             }
             netdp = netdp < 0 ? 0 : netdp;
-
 
             _tracingService.Trace("Ended ComputeNetDownPayment method...");
 
@@ -1065,7 +1055,6 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
             quoteToUpdate["gsc_downpayment"] = new Money(netdownpayment);
             quoteToUpdate["gsc_totalcashoutlay"] = new Money(cashoutlay);
             quoteToUpdate["gsc_totalamountfinanced"] = new Money(amountfinanced);
-
 
             _organizationService.Update(quoteToUpdate);
 
@@ -1451,7 +1440,6 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
                         quoteEntity["gsc_alternatecontactno"] = contacEntity.Contains("telephone1")
                             ? contacEntity.GetAttributeValue<String>("telephone1")
                             : String.Empty;
-
                     }
                 }
 
@@ -1537,7 +1525,7 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
                 if (customerTaxRate != 0)
                     customerTaxRate = customerTaxRate / 100;
 
-                var vehicleTaxRate = (decimal)vehicleEntity.GetAttributeValue<Double>("gsc_taxrate"); ;
+                var vehicleTaxRate = (decimal)vehicleEntity.GetAttributeValue<Double>("gsc_taxrate");
 
                 if (vehicleTaxRate != 0)
                     vehicleTaxRate = vehicleTaxRate / 100;
@@ -1567,7 +1555,7 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
                 //Cash/Bank PO/Company PO
                 else
                     //sales = (netPrice + otherCharges + insurance + accessories) / (1 + vehicleTaxRate);
-                    sales = (netPrice) / (1 + vehicleTaxRate);//changed as per bug#15957. Modified 4-10-17
+                    sales = (netPrice) / (1 + vehicleTaxRate); //changed as per bug#15957. Modified 4-10-17
                 sales = Math.Round(sales, 2);
 
                 if (taxCategory == 100000000)//VATable
@@ -1580,7 +1568,6 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
                     quoteEntity["gsc_totalsales"] = new Money(sales);
                     quoteEntity["gsc_vatamount"] = new Money(Math.Round(sales * customerTaxRate, 2));
                     quoteEntity["gsc_totalamountdue"] = new Money(Math.Round(sales + (sales * customerTaxRate), 2));
-
                 }
                 else if (taxCategory == 100000002)//Vat Exempt
                 {
@@ -1606,7 +1593,6 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
 
             _tracingService.Trace("Ending ComputeVAT method...");
             return quoteEntity;
-
         }
 
         //Created By: Leslie G. Baliguat
@@ -1632,7 +1618,6 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
 
             _tracingService.Trace("Ended DeleteExistingCabChassis method..");
         }
-
 
         //Created By: Raphael Herrera, Created On:  9/26/2016
         /*Purpose: Set Financing check box of QuoteCabChassis accordingly on change of payment mode
@@ -1669,7 +1654,6 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
                     _organizationService.Update(quoteCC);
                     _tracingService.Trace("Updated Quote Cab Chassis Financing to " + financing);
                 }
-
             }
             _tracingService.Trace("Ending SetCabChassisFinancing Method...");
         }
@@ -1815,7 +1799,6 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
 
             _tracingService.Trace("Ending PopulatePaymentSummary Method...");
             return quoteEntity;
-
         }
 
         //Created By: Jerome Anthony Gerero, Created On: 10/4/2016
@@ -2051,7 +2034,7 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
 
                 Entity product = productCollection.Entities[0];
                 Guid priceLevelId = product.Contains("pricelevelid") ? product.GetAttributeValue<EntityReference>("pricelevelid").Id
-               :Guid.Empty;
+               : Guid.Empty;
 
                 if (!product.Contains("gsc_sellprice"))
                 {
@@ -2065,7 +2048,6 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
             }
             _tracingService.Trace("Ended CheckIfHasUnitPrice Method...");
             return false;
-
         }
 
         public void ConvertPotentialtoCustomer(Entity quoteEntity)
@@ -2103,7 +2085,6 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
             {
                 throw new InvalidPluginExecutionException("These records cannot be deleted.");
             }
-
         }
     }
 }

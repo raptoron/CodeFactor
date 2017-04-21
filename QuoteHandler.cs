@@ -39,7 +39,7 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
 
             //Retrieve Opportunity record from Opportunity ID field value
             EntityCollection opportunityRecords = CommonHandler.RetrieveRecordsByOneValue("opportunity", "opportunityid", opportunityId, _organizationService, null, OrderType.Ascending,
-                new[] { "gsc_salesexecutiveid", "gsc_vehiclebasemodelid", "gsc_colorid", "gsc_leadsourceid", "originatingleadid", "customerid", "gsc_dealerid", "gsc_branchid", "gsc_portaluserid", "name", "gsc_paymentmode", "gsc_financingtermid"});
+                new[] { "gsc_salesexecutiveid", "gsc_vehiclebasemodelid", "gsc_colorid", "gsc_leadsourceid", "originatingleadid", "customerid", "gsc_dealerid", "gsc_branchid", "gsc_portaluserid", "name", "gsc_paymentmode", "gsc_financingtermid" });
 
             if (opportunityRecords != null && opportunityRecords.Entities.Count > 0)
             {
@@ -494,13 +494,13 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
             if (amountFinancedDiscount != 0)
             {
                 if (CheckifZIP(quoteEntity, schemeEntity))
-                {//There is discount for amount financed but AOR is Zero or Tagged as ZIP
+                { //There is discount for amount financed but AOR is Zero or Tagged as ZIP
                     _tracingService.Trace("There is discount for amount financed but AOR is Zero or Tagged as ZIP");
 
                     monthlyAmortization = NormalFormula(quoteEntity, schemeEntity);
                 }
                 else
-                {//There is discount for amount financed
+                { //There is discount for amount financed
                     _tracingService.Trace("There is discount for amount financed");
                     monthlyAmortization = PMTFormula(quoteEntity, schemeEntity);
                 }
@@ -1013,7 +1013,6 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
                     _tracingService.Trace("Ended ComputeNetPrice method...");
                     return 0;
                 }
-
                 else
                 {
                     _tracingService.Trace("Ended ComputeNetPrice method...");
@@ -1156,7 +1155,6 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
                         _tracingService.Trace("Condition1 Chattel Fee: " + chattelfee);
                     }
                     //}
-
                     if (unitPriceAmount < (Decimal)chattelFeeRecords.Entities[0].GetAttributeValue<Money>("gsc_loanamount").Value)
                     {
                         chattelfee = (Decimal)0.00;
@@ -1198,7 +1196,10 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
             _tracingService.Trace("Started ReplicateEditableChattelFee method..");
 
             //Return if Free Chattel Fee is checked
-            if (quoteEntity.GetAttributeValue<Boolean>("gsc_freechattelfee") == true) { return null; }
+            if (quoteEntity.GetAttributeValue<Boolean>("gsc_freechattelfee") == true) 
+            { 
+                return null; 
+            }
 
             Decimal newChattelFeeAmount = quoteEntity.Contains("gsc_chattelfeeeditable")
                 ? quoteEntity.GetAttributeValue<Money>("gsc_chattelfeeeditable").Value
@@ -1400,7 +1401,6 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
                         : String.Empty;
                     quoteEntity["gsc_alternatecontactno"] = String.Empty;
                 }
-
                 else
                 {
                     //Retrieve customer info in contact
@@ -1462,7 +1462,6 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
 
             return quoteEntity;
         }
-
 
         //Created By: Raphael Herrera, Created On:  6/24/2016
         //Modified By: Raphael Herrera, Modified On: 9/26/2016
@@ -1658,7 +1657,6 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
             _tracingService.Trace("Ending SetCabChassisFinancing Method...");
         }
 
-
         //Created By: Raphael Herrera, Created On:  9/26/2016
         /*Purpose: Set Total Cash Outlay, Amount Financed, Net Amount Financed and Net Monthly Amortization fields to 0.00
         *       
@@ -1690,7 +1688,6 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
 
          //   var priceLevelId = productEntity.Contains("pricelevelid") ? productEntity.GetAttributeValue<EntityReference>("pricelevelid").Id
                // : Guid.Empty;
-
             decimal sellPrice = 0;
 
             PriceListHandler priceListHandler = new PriceListHandler(_organizationService, _tracingService);
@@ -1908,7 +1905,10 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
 
             Boolean createOrder = quoteEntity.GetAttributeValue<Boolean>("gsc_createorder");
 
-            if (createOrder == false) { return null; }
+            if (createOrder == false) 
+            { 
+                return null; 
+            }
 
             EntityCollection opportunityRecords = CommonHandler.RetrieveRecordsByOneValue("opportunity", "opportunityid", opportunityId, _organizationService, null, OrderType.Ascending,
                 new[] { "statecode", "statuscode" });
@@ -2088,4 +2088,3 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
         }
     }
 }
-

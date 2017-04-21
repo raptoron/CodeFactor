@@ -253,11 +253,9 @@ namespace GSC.Rover.DMS.BusinessLogic.Contact
 
                     _tracingService.Trace("Self record retrieved...");
                 }
-
             }
             _tracingService.Trace("Ending CheckForExistingRecords method...");
             return prospectEntity;
-
         }
         //Created By: Leslie Baliguat, Created On: 12/07/2016
         /* Purpose:  Update Primary Contact Details in Corporate Customer Form 

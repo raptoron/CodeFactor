@@ -581,7 +581,7 @@ namespace GSC.Rover.DMS.BusinessLogic.Quote
 
             _tracingService.Trace("WithAFDiscount Computed.");
 
-            return (pv * (rate / 12)) / (1 - Math.Pow((1 + (rate / 12)), (-1 * term)));
+            return pv * (rate / 12) / (1 - Math.Pow((1 + (rate / 12)), -1 * term));
         }
 
         /*Monthly Amortization =  (Total Amount Financed x (1+AOR)/ Financing Terms
